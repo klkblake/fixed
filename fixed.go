@@ -61,6 +61,22 @@ func (x Fixed) Floor() Fixed {
 	return Fixed{x.value &^ lowMask}
 }
 
+func (x Fixed) Gt(y Fixed) bool {
+	return x.value > y.value
+}
+
+func (x Fixed) Lt(y Fixed) bool {
+	return x.value < y.value
+}
+
+func (x Fixed) Geq(y Fixed) bool {
+	return x.value >= y.value
+}
+
+func (x Fixed) Leq(y Fixed) bool {
+	return x.value <= y.value
+}
+
 func (x Fixed) Cmp(y Fixed) int {
 	if x.value > y.value {
 		return 1
