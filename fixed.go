@@ -38,16 +38,32 @@ func (x Fixed) Add(y Fixed) Fixed {
 	return Fixed{x.value + y.value}
 }
 
+func (x Fixed) Addf(y float64) Fixed {
+	return x.Add(New(y))
+}
+
 func (x Fixed) Sub(y Fixed) Fixed {
 	return Fixed{x.value - y.value}
+}
+
+func (x Fixed) Subf(y float64) Fixed {
+	return x.Sub(New(y))
 }
 
 func (x Fixed) Mul(y Fixed) Fixed {
 	return Fixed{(x.value / halfScale) * (y.value / halfScale)}
 }
 
+func (x Fixed) Mulf(y float64) Fixed {
+	return x.Mul(New(y))
+}
+
 func (x Fixed) Div(y Fixed) Fixed {
 	return Fixed{(x.value * halfScale) / (y.value * halfScale)}
+}
+
+func (x Fixed) Divf(y float64) Fixed {
+	return x.Div(New(y))
 }
 
 func (x Fixed) Ceil() Fixed {
