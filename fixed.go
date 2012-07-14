@@ -1,0 +1,114 @@
+package fixed
+
+import "strconv"
+
+const (
+	fracBits  = 32
+	scale     = 1 << fracBits
+	halfScale = scale >> 1
+	lowMask   = scale - 1
+)
+
+var (
+	Zero = Fixed{0}
+	One  = Fixed{scale}
+)
+
+// Fixed-point number in Q32.32 format.
+type Fixed struct {
+	value int64
+}
+
+func New(x float64) Fixed {
+	return Fixed{int64(x * scale)}
+}
+
+func (x Fixed) Abs() Fixed {
+	if x.value < 0 {
+		return x.Neg()
+	}
+	return x
+}
+
+func (x Fixed) Neg() Fixed {
+	return Fixed{-x.value}
+}
+
+func (x Fixed) Add(y Fixed) Fixed {
+	return Fixed{x.value + y.value}
+}
+
+func (x Fixed) Sub(y Fixed) Fixed {
+	return Fixed{x.value - y.value}
+}
+
+func (x Fixed) Mul(y Fixed) Fixed {
+	return Fixed{(x.value / halfScale) * (y.value / halfScale)}
+}
+
+func (x Fixed) Div(y Fixed) Fixed {
+	return Fixed{(x.value * halfScale) / (y.value * halfScale)}
+}
+
+func (x Fixed) Ceil() Fixed {
+	if x.value&lowMask == 0 {
+		return x
+	}
+	return Fixed{x.value&^lowMask + scale}
+}
+
+func (x Fixed) Floor() Fixed {
+	return Fixed{x.value &^ lowMask}
+}
+
+func (x Fixed) Cmp(y Fixed) int {
+	if x.value > y.value {
+		return 1
+	}
+	if x.value < y.value {
+		return -1
+	}
+	return 0
+}
+
+func (x Fixed) Max(y Fixed) Fixed {
+	if x.value >= y.value {
+		return x
+	}
+	return y
+}
+
+func (x Fixed) Min(y Fixed) Fixed {
+	if x.value <= y.value {
+		return x
+	}
+	return y
+}
+
+func (x Fixed) Int64() int64 {
+	if x.value >= 0 || x.value&lowMask == 0 {
+		return int64(x.value >> fracBits)
+	}
+	return int64(x.value>>fracBits) + 1
+}
+
+func (x Fixed) Frac() float64 {
+	return float64(x.value & lowMask)
+}
+
+func (x Fixed) Float64() float64 {
+	return float64(x.value) / scale
+}
+
+func (x Fixed) String() string {
+	// XXX This is an ugly hack.
+	int := x.Int64()
+	frac := x.Frac()
+	if x.value >= 0 {
+		return strconv.FormatInt(int, 10) + strconv.FormatFloat(frac, 'f', -1, 64)[1:]
+	}
+	if int == 0 {
+		return "-" + strconv.FormatInt(int, 10) + strconv.FormatFloat(frac, 'f', -1, 64)[2:]
+	}
+	return strconv.FormatInt(int, 10) + strconv.FormatFloat(frac, 'f', -1, 64)[2:]
+}
