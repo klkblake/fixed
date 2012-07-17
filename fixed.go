@@ -66,6 +66,14 @@ func (x Fixed) Divf(y float64) Fixed {
 	return x.Div(New(y))
 }
 
+func (x Fixed) Mod(y Fixed) Fixed {
+	return Fixed{x.value % y.value}
+}
+
+func (x Fixed) Modf(y float64) Fixed {
+	return x.Mod(New(y))
+}
+
 func (x Fixed) Ceil() Fixed {
 	if x.value&lowMask == 0 {
 		return x
