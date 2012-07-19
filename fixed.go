@@ -132,6 +132,10 @@ func (x Fixed) Int64() int64 {
 	return int64(x.value>>fracBits) + 1
 }
 
+func (x Fixed) Int32() int32 {
+	return int32(x.Int64())
+}
+
 func (x Fixed) Frac() float64 {
 	return float64(x.value & lowMask)
 }
