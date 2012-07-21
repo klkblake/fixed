@@ -1,6 +1,9 @@
 package fixed
 
-import "strconv"
+import (
+	"math"
+	"strconv"
+)
 
 const (
 	fracBits  = 32
@@ -12,6 +15,8 @@ const (
 var (
 	Zero = Fixed{0}
 	One  = Fixed{scale}
+	Min  = Fixed{math.MinInt64}
+	Max  = Fixed{math.MaxInt64}
 )
 
 // Fixed-point number in Q32.32 format.
